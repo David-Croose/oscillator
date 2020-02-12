@@ -8,15 +8,15 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     this->setFixedSize(848, 532);
 
-    series = new QLineSeries();
+    QLineSeries *series = new QLineSeries();
+    series->setPointLabelsVisible(true);
+    series->setPointsVisible(true);
     series->append(0, 6);  series->append(1, 9);
     series->append(2, 4);
     series->append(3, 8);
     series->append(7, 4);
     series->append(10, 5);
     series->append(11, 9);
-
-
     series->append(12, 19);
     series->append(13, 2);
     series->append(14, 6);
@@ -24,22 +24,20 @@ MainWindow::MainWindow(QWidget *parent)
     series->append(16, 12);
     series->append(17, 17);
     series->append(18, 5);
+    ui->chartview->chart()->addSeries(series);
+    ui->chartview->chart()->legend()->hide();
 
+    QValueAxis *axisX = new QValueAxis;
+    axisX->setRange(0, 10);
+    axisX->setTickCount(11);
+    axisX->setLabelFormat("%.2f");
+    ui->chartview->chart()->setAxisX(axisX, series);
 
-    chart = new QChart();
-    chart->legend()->hide();
-    chart->addSeries(series);
-    /// chart->createDefaultAxes();
-    ui->chartview->setChart(chart);
-
-
-    QValueAxis *x = new QValueAxis();
-    x->setTickCount(20);
-    chart->addAxis(x, Qt::AlignBottom);
-
-
-    chart->axisX()->setRange(0, 10);
-
+    QValueAxis *axisY = new QValueAxis;
+    axisY->setRange(0, 10);
+    axisY->setTickCount(11);
+    axisY->setLabelFormat("%.2f");
+    ui->chartview->chart()->setAxisY(axisY, NULL);
 }
 
 MainWindow::~MainWindow()
@@ -47,16 +45,14 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-int prev;
+
 
 void MainWindow::on_horizontalScrollBar_sliderMoved(int position)
 {
-    // qDebug("%d\n", position);
-
+    static int prev;
     int delta = position - prev;
-
     prev = position;
-
-    this->chart->scroll(delta * 8, 0);
+    delta *= 8;
+    this->ui->chartview->chart()->scroll(delta, 0);
 }
 

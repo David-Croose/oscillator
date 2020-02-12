@@ -19,10 +19,6 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    QLineSeries *series;
-    QChart *chart;
-
-
 private slots:
     void on_horizontalScrollBar_sliderMoved(int position);
 
