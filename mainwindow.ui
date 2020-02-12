@@ -14,23 +14,23 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QChartView" name="defectWaveform" native="true">
+   <widget class="QChartView" name="chartview" native="true">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>140</y>
-      <width>331</width>
-      <height>171</height>
+      <x>10</x>
+      <y>0</y>
+      <width>821</width>
+      <height>471</height>
      </rect>
     </property>
    </widget>
    <widget class="QScrollBar" name="horizontalScrollBar">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>355</y>
-      <width>641</width>
-      <height>41</height>
+      <x>10</x>
+      <y>480</y>
+      <width>831</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="orientation">
@@ -47,12 +47,12 @@
      <height>22</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu245">
+   <widget class="QMenu" name="menuOpenFile">
     <property name="title">
      <string>文件</string>
     </property>
    </widget>
-   <addaction name="menu245"/>
+   <addaction name="menuOpenFile"/>
   </widget>
  </widget>
  <customwidgets>

@@ -2,11 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QMainWindow>
-#include <QtCharts/QChartView>
 #include <QtCharts/QLineSeries>
+#include <QValueAxis>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -24,10 +21,10 @@ public:
 
     QLineSeries *series;
     QChart *chart;
-    QChartView *chartView;
 
 
-
+private slots:
+    void on_horizontalScrollBar_sliderMoved(int position);
 
 private:
     Ui::MainWindow *ui;
