@@ -1,6 +1,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QFileDialog>
+#include <QStandardPaths>
+#include <QMessageBox>
+#include <QtDebug>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -24,20 +29,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     // append points
     series = new QLineSeries();
-    series->append(0, 6);
-    series->append(1, 9);
-    series->append(2, 4);
-    series->append(3, 8);
-    series->append(7, 4);
-    series->append(10, 5);
-    series->append(11, 9);
-    series->append(12, 19);
-    series->append(13, 2);
-    series->append(14, 6);
-    series->append(15, 9);
-    series->append(16, 12);
-    series->append(17, 17);
-    series->append(18, 5);
     ui->chartview->chart()->addSeries(series);
     series->attachAxis(axisX);
     series->attachAxis(axisY);
@@ -50,6 +41,13 @@ MainWindow::MainWindow(QWidget *parent)
     // the checkbox
     ui->checkBox->setChecked(true);
     ui->checkBox_2->setChecked(true);
+
+    // the action of "文件：打开"
+    QAction *openFileAction = ui->menuFile->addAction("打开");
+    connect(openFileAction, SIGNAL(triggered()), this, SLOT(on_openFile()));
+
+    // the action of "关于"
+    // connect(ui->menuAbout, SIGNAL(triggered()), this, SLOT(on_openFile()));
 }
 
 MainWindow::~MainWindow()
@@ -57,7 +55,38 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::on_openFile()
+{
+    // select file
+    QString fileName = QFileDialog::getOpenFileName(this, tr("选择文件"),
+        QStandardPaths::writableLocation(QStandardPaths::DesktopLocation),
+        tr("binary file(*.bin *.hex *.dat);;all files(*.*)"));
 
+    // open file
+    QFile *f = new QFile(fileName);
+    if (!f->open(QIODevice::ReadOnly)) {
+        QMessageBox::about(this, "错误", "文件打开失败");
+        return;
+    }
+
+    // read points from file
+    QByteArray dat = f->readAll();
+    int totlen = dat.length();
+    if (totlen == 0) {
+        QMessageBox::about(this, "错误", "文件为空");
+    }
+    f->close();
+    series->clear();
+
+    // add points to chartview
+    /// for (int i = 0; i < totlen; i++) {
+    ///     series->append(i, dat[i]);
+    /// }
+
+    for (int i = 0; i < totlen; i += 8) {
+        series->append(i, dat[i]);
+    }
+}
 
 void MainWindow::on_horizontalScrollBar_sliderMoved(int position)
 {
@@ -67,7 +96,6 @@ void MainWindow::on_horizontalScrollBar_sliderMoved(int position)
     delta *= 8;
     this->ui->chartview->chart()->scroll(delta, 0);
 }
-
 
 void MainWindow::on_checkBox_released()
 {
