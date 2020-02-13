@@ -19,10 +19,14 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    QLineSeries *series;
+
 private slots:
     void on_horizontalScrollBar_sliderMoved(int position);
 
     void on_checkBox_released();
+
+    void on_checkBox_2_released();
 
 private:
     Ui::MainWindow *ui;

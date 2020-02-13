@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->chartview->chart()->addAxis(axisY, Qt::AlignLeft);
 
     // append points
-    QLineSeries *series = new QLineSeries();
+    series = new QLineSeries();
     series->append(0, 6);
     series->append(1, 9);
     series->append(2, 4);
@@ -46,6 +46,10 @@ MainWindow::MainWindow(QWidget *parent)
     series->setPointLabelsVisible(true);
     series->setPointsVisible(true);
     ui->chartview->chart()->legend()->hide();
+
+    // the checkbox
+    ui->checkBox->setChecked(true);
+    ui->checkBox_2->setChecked(true);
 }
 
 MainWindow::~MainWindow()
@@ -67,5 +71,10 @@ void MainWindow::on_horizontalScrollBar_sliderMoved(int position)
 
 void MainWindow::on_checkBox_released()
 {
-    ui->checkBox->isChecked();
+    series->setPointsVisible(ui->checkBox->isChecked());
+}
+
+void MainWindow::on_checkBox_2_released()
+{
+    series->setPointLabelsVisible(ui->checkBox_2->isChecked());
 }
