@@ -6,6 +6,11 @@
 #include <QMessageBox>
 #include <QtDebug>
 
+#define XAXIS_INIT_SIZE     (10)
+#define XAXIS_MAX_SIZE      (10000)
+#define YAXIS_INIT_SIZE     (10)
+#define YAXIS_MAX_SIZE      (10000)
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -48,6 +53,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     // the action of "关于"
     // connect(ui->menuAbout, SIGNAL(triggered()), this, SLOT(on_openFile()));
+
+    // the spinbox(x,y-axis range)
+    ui->spinBox->setRange(0, XAXIS_MAX_SIZE);
+    ui->spinBox->setValue(XAXIS_INIT_SIZE);
+    ui->spinBox_2->setRange(0, YAXIS_MAX_SIZE);
+    ui->spinBox_2->setValue(YAXIS_INIT_SIZE);
 }
 
 MainWindow::~MainWindow()
@@ -79,12 +90,10 @@ void MainWindow::on_openFile()
     series->clear();
 
     // add points to chartview
-    /// for (int i = 0; i < totlen; i++) {
-    ///     series->append(i, dat[i]);
-    /// }
-
-    for (int i = 0; i < totlen; i += 8) {
-        series->append(i, dat[i]);
+    qDebug() << "adding... " << totlen;
+    int i, j;
+    for (j = 0, i = 0; i < totlen; i += 8, j++) {
+        series->append(j, dat[i]);
     }
 }
 
@@ -105,4 +114,14 @@ void MainWindow::on_checkBox_released()
 void MainWindow::on_checkBox_2_released()
 {
     series->setPointLabelsVisible(ui->checkBox_2->isChecked());
+}
+
+void MainWindow::on_spinBox_valueChanged(int arg1)
+{
+    ui->chartview->chart()->axes(Qt::Horizontal, NULL)[0]->setRange(0, arg1);
+}
+
+void MainWindow::on_spinBox_2_valueChanged(int arg1)
+{
+    ui->chartview->chart()->axes(Qt::Vertical, NULL)[0]->setRange(0, arg1);
 }

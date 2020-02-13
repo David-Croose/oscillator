@@ -30,6 +30,9 @@ private slots:
     void on_checkBox_released();
 
     void on_checkBox_2_released();
+    void on_spinBox_valueChanged(int arg1);
+
+    void on_spinBox_2_valueChanged(int arg1);
 
 private:
     Ui::MainWindow *ui;
