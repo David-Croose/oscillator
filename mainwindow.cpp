@@ -37,7 +37,7 @@ MainWindow::MainWindow(QWidget *parent)
     axisY->setRange(0, 10);
     axisY->setTickCount(11);
     axisY->setLabelFormat("%.2f");
-    ui->chartview->chart()->setAxisY(axisY, NULL);
+    ui->chartview->chart()->setAxisY(axisY, series);
 }
 
 MainWindow::~MainWindow()
