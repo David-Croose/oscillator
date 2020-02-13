@@ -8,10 +8,24 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     this->setFixedSize(848, 532);
 
+    // the x-axis
+    QValueAxis *axisX = new QValueAxis;
+    axisX->setRange(0, 10);
+    axisX->setTickCount(11);
+    axisX->setLabelFormat("%.2f");
+    ui->chartview->chart()->addAxis(axisX, Qt::AlignBottom);
+
+    // the y-axis
+    QValueAxis *axisY = new QValueAxis;
+    axisY->setRange(0, 10);
+    axisY->setTickCount(11);
+    axisY->setLabelFormat("%.2f");
+    ui->chartview->chart()->addAxis(axisY, Qt::AlignLeft);
+
+    // append points
     QLineSeries *series = new QLineSeries();
-    series->setPointLabelsVisible(true);
-    series->setPointsVisible(true);
-    series->append(0, 6);  series->append(1, 9);
+    series->append(0, 6);
+    series->append(1, 9);
     series->append(2, 4);
     series->append(3, 8);
     series->append(7, 4);
@@ -25,19 +39,13 @@ MainWindow::MainWindow(QWidget *parent)
     series->append(17, 17);
     series->append(18, 5);
     ui->chartview->chart()->addSeries(series);
+    series->attachAxis(axisX);
+    series->attachAxis(axisY);
+
+    // the points and chartview
+    series->setPointLabelsVisible(true);
+    series->setPointsVisible(true);
     ui->chartview->chart()->legend()->hide();
-
-    QValueAxis *axisX = new QValueAxis;
-    axisX->setRange(0, 10);
-    axisX->setTickCount(11);
-    axisX->setLabelFormat("%.2f");
-    ui->chartview->chart()->setAxisX(axisX, series);
-
-    QValueAxis *axisY = new QValueAxis;
-    axisY->setRange(0, 10);
-    axisY->setTickCount(11);
-    axisY->setLabelFormat("%.2f");
-    ui->chartview->chart()->setAxisY(axisY, series);
 }
 
 MainWindow::~MainWindow()
@@ -56,3 +64,8 @@ void MainWindow::on_horizontalScrollBar_sliderMoved(int position)
     this->ui->chartview->chart()->scroll(delta, 0);
 }
 
+
+void MainWindow::on_checkBox_released()
+{
+    ui->checkBox->isChecked();
+}

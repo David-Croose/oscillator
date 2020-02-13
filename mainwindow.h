@@ -22,6 +22,8 @@ public:
 private slots:
     void on_horizontalScrollBar_sliderMoved(int position);
 
+    void on_checkBox_released();
+
 private:
     Ui::MainWindow *ui;
 };
