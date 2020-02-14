@@ -47,9 +47,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->checkBox->setChecked(true);
     ui->checkBox_2->setChecked(true);
 
-    // the action of "关于"
-    // connect(ui->menuAbout, SIGNAL(triggered()), this, SLOT(on_openFile()));
-
     // the spinbox(x,y-axis range)
     ui->spinBox->setRange(0, XAXIS_MAX_SIZE);
     ui->spinBox->setValue(XAXIS_INIT_SIZE);
@@ -61,6 +58,8 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+QByteArray dat;
 
 void MainWindow::openfile(int drag, QString dragfileName)
 {
@@ -78,15 +77,12 @@ void MainWindow::openfile(int drag, QString dragfileName)
     // open file
     QFile *f = new QFile(fileName);
     if (!f->open(QIODevice::ReadOnly)) {
-        ///QMessageBox::about(this, "错误", "文件打开失败");
         return;
     }
     this->setWindowTitle(fileName);
-    //ui->horizontalScrollBar->setMaximum(this->datlen);
-    //ui->horizontalScrollBar->setValue(0);
 
     // read points from file
-    QByteArray dat = f->readAll();
+    dat = f->readAll();
     if ((this->datlen = dat.length()) == 0) {
         QMessageBox::about(this, "错误", "文件为空");
     }
@@ -108,7 +104,7 @@ void MainWindow::on_horizontalScrollBar_valueChanged(int value)
 
     prev = value;
     delta = delta / 100.0 * this->datlen;
-    ui->chartview->chart()->scroll(delta, 0);
+    ui->chartview->chart()->scroll(delta * 100, 0);
 }
 
 void MainWindow::on_checkBox_released()
