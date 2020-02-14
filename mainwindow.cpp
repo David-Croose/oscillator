@@ -52,6 +52,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->spinBox->setValue(XAXIS_INIT_SIZE);
     ui->spinBox_2->setRange(0, YAXIS_MAX_SIZE);
     ui->spinBox_2->setValue(YAXIS_INIT_SIZE);
+
+    // thread
+    thread = new myThread();
 }
 
 MainWindow::~MainWindow()
@@ -90,21 +93,10 @@ void MainWindow::openfile(int drag, QString dragfileName)
     series->clear();
 
     // add points to chartview
-    qDebug() << "adding... " << this->datlen/8;
     int i, j;
     for (j = 0, i = 0; i < this->datlen; i += 1, j++) {
         series->append(j, dat[i]);
     }
-}
-
-void MainWindow::on_horizontalScrollBar_valueChanged(int value)
-{
-    static int prev;
-    double delta = (double)value - prev;
-
-    prev = value;
-    delta = delta / 100.0 * this->datlen;
-    ui->chartview->chart()->scroll(delta * 100, 0);
 }
 
 void MainWindow::on_checkBox_released()
@@ -144,4 +136,59 @@ void MainWindow::on_actionOpenfile_triggered()
 void MainWindow::on_actionAbout_triggered()
 {
     QMessageBox::about(this, "关于", "这是一个波形查看软件");
+}
+
+void MainWindow::chartview_moveright()
+{
+    ui->chartview->chart()->scroll(10, 0);
+}
+
+void MainWindow::chartview_moveleft()
+{
+    ui->chartview->chart()->scroll(-10, 0);
+}
+
+void myThread::run()
+{
+    int delay = 100 * 1000;
+    int i = 0;
+
+    runflag = 1;
+    while (runflag) {
+        emit call();
+
+        if (i < 15 && ++i >= 15) {     // when the loop runs up to some lap, speed it up
+            delay = 5 * 1000;
+        }
+        QThread::usleep(delay);
+    }
+}
+
+void myThread::kill()
+{
+    runflag = 0;
+}
+
+void MainWindow::on_pushButtonLeft_pressed()
+{
+    this->thread->disconnect(SIGNAL(call()));
+    connect(this->thread, SIGNAL(call()), this, SLOT(chartview_moveleft()));
+    thread->start();
+}
+
+void MainWindow::on_pushButtonRight_pressed()
+{
+    this->thread->disconnect(SIGNAL(call()));
+    connect(this->thread, SIGNAL(call()), this, SLOT(chartview_moveright()));
+    thread->start();
+}
+
+void MainWindow::on_pushButtonLeft_released()
+{
+    thread->kill();
+}
+
+void MainWindow::on_pushButtonRight_released()
+{
+    thread->kill();
 }
