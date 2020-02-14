@@ -5,6 +5,11 @@
 #include <QtCharts/QLineSeries>
 #include <QValueAxis>
 
+#include<QDragEnterEvent>
+#include<QMimeData>
+#include<QDropEvent>
+#include<QUrl>
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -20,12 +25,11 @@ public:
     ~MainWindow();
 
     QLineSeries *series;
-
+    int datlen;
+    void openfile(int drag, QString dragfileName);
 
 private slots:
     void on_openFile();
-
-    void on_horizontalScrollBar_sliderMoved(int position);
 
     void on_checkBox_released();
 
@@ -34,7 +38,13 @@ private slots:
 
     void on_spinBox_2_valueChanged(int arg1);
 
+    void on_horizontalScrollBar_valueChanged(int value);
+
 private:
     Ui::MainWindow *ui;
+
+protected:
+    void dragEnterEvent(QDragEnterEvent*event);//拖动进入事件
+    void dropEvent(QDropEvent*event);
 };
 #endif // MAINWINDOW_H

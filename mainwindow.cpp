@@ -66,12 +66,18 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_openFile()
+void MainWindow::openfile(int drag, QString dragfileName)
 {
-    // select file
-    QString fileName = QFileDialog::getOpenFileName(this, tr("选择文件"),
-        QStandardPaths::writableLocation(QStandardPaths::DesktopLocation),
-        tr("binary file(*.bin *.hex *.dat);;all files(*.*)"));
+    QString fileName;
+
+    if (drag == 0) {
+        // select file
+        fileName = QFileDialog::getOpenFileName(this, tr("选择文件"),
+            QStandardPaths::writableLocation(QStandardPaths::DesktopLocation),
+            tr("binary file(*.bin *.hex *.dat);;all files(*.*)"));
+    } else {
+        fileName = dragfileName;
+    }
 
     // open file
     QFile *f = new QFile(fileName);
@@ -79,31 +85,40 @@ void MainWindow::on_openFile()
         QMessageBox::about(this, "错误", "文件打开失败");
         return;
     }
+    this->setWindowTitle(fileName);
+    //ui->horizontalScrollBar->setMaximum(this->datlen);
+    //ui->horizontalScrollBar->setValue(0);
 
     // read points from file
     QByteArray dat = f->readAll();
-    int totlen = dat.length();
-    if (totlen == 0) {
+    if ((this->datlen = dat.length()) == 0) {
         QMessageBox::about(this, "错误", "文件为空");
     }
     f->close();
     series->clear();
 
     // add points to chartview
-    qDebug() << "adding... " << totlen;
+    qDebug() << "adding... " << this->datlen/8;
     int i, j;
-    for (j = 0, i = 0; i < totlen; i += 8, j++) {
+    for (j = 0, i = 0; i < this->datlen; i += 1, j++) {
         series->append(j, dat[i]);
     }
 }
 
-void MainWindow::on_horizontalScrollBar_sliderMoved(int position)
+void MainWindow::on_openFile()
+{
+    QString none = "";
+    openfile(0, none);
+}
+
+void MainWindow::on_horizontalScrollBar_valueChanged(int value)
 {
     static int prev;
-    int delta = position - prev;
-    prev = position;
-    delta *= 8;
-    this->ui->chartview->chart()->scroll(delta, 0);
+    double delta = (double)value - prev;
+
+    prev = value;
+    delta = delta / 100.0 * this->datlen;
+    ui->chartview->chart()->scroll(delta, 0);
 }
 
 void MainWindow::on_checkBox_released()
@@ -125,3 +140,19 @@ void MainWindow::on_spinBox_2_valueChanged(int arg1)
 {
     ui->chartview->chart()->axes(Qt::Vertical, NULL)[0]->setRange(0, arg1);
 }
+
+void MainWindow::dragEnterEvent(QDragEnterEvent*event){
+    event->acceptProposedAction();
+}
+
+void MainWindow::dropEvent(QDropEvent*event){
+    const QMimeData *qm = event->mimeData();
+    openfile(1, qm->urls()[0].toLocalFile());
+}
+
+
+
+
+
+
+

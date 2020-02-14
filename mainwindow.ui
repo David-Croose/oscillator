@@ -10,6 +10,9 @@
     <height>532</height>
    </rect>
   </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
@@ -22,6 +25,9 @@
       <width>821</width>
       <height>441</height>
      </rect>
+    </property>
+    <property name="acceptDrops">
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QScrollBar" name="horizontalScrollBar">
