@@ -129,18 +129,22 @@
     <property name="title">
      <string>文件</string>
     </property>
-   </widget>
-   <widget class="QMenu" name="menuAbout">
-    <property name="title">
-     <string>关于</string>
-    </property>
+    <addaction name="actionOpenfile"/>
+    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuAbout"/>
   </widget>
-  <action name="actionOpenFile">
+  <action name="actionOpenfile">
    <property name="text">
     <string>打开</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>关于</string>
    </property>
   </action>
  </widget>

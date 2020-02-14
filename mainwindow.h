@@ -29,16 +29,19 @@ public:
     void openfile(int drag, QString dragfileName);
 
 private slots:
-    void on_openFile();
-
     void on_checkBox_released();
 
     void on_checkBox_2_released();
+
     void on_spinBox_valueChanged(int arg1);
 
     void on_spinBox_2_valueChanged(int arg1);
 
     void on_horizontalScrollBar_valueChanged(int value);
+
+    void on_actionOpenfile_triggered();
+
+    void on_actionAbout_triggered();
 
 private:
     Ui::MainWindow *ui;

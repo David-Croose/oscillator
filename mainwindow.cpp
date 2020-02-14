@@ -47,10 +47,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->checkBox->setChecked(true);
     ui->checkBox_2->setChecked(true);
 
-    // the action of "文件：打开"
-    QAction *openFileAction = ui->menuFile->addAction("打开");
-    connect(openFileAction, SIGNAL(triggered()), this, SLOT(on_openFile()));
-
     // the action of "关于"
     // connect(ui->menuAbout, SIGNAL(triggered()), this, SLOT(on_openFile()));
 
@@ -82,7 +78,7 @@ void MainWindow::openfile(int drag, QString dragfileName)
     // open file
     QFile *f = new QFile(fileName);
     if (!f->open(QIODevice::ReadOnly)) {
-        QMessageBox::about(this, "错误", "文件打开失败");
+        ///QMessageBox::about(this, "错误", "文件打开失败");
         return;
     }
     this->setWindowTitle(fileName);
@@ -103,12 +99,6 @@ void MainWindow::openfile(int drag, QString dragfileName)
     for (j = 0, i = 0; i < this->datlen; i += 1, j++) {
         series->append(j, dat[i]);
     }
-}
-
-void MainWindow::on_openFile()
-{
-    QString none = "";
-    openfile(0, none);
 }
 
 void MainWindow::on_horizontalScrollBar_valueChanged(int value)
@@ -150,9 +140,12 @@ void MainWindow::dropEvent(QDropEvent*event){
     openfile(1, qm->urls()[0].toLocalFile());
 }
 
+void MainWindow::on_actionOpenfile_triggered()
+{
+    openfile(0, 0);
+}
 
-
-
-
-
-
+void MainWindow::on_actionAbout_triggered()
+{
+    QMessageBox::about(this, "关于", "这是一个波形查看软件");
+}
