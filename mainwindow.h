@@ -44,10 +44,10 @@ public:
     int datlen;
     void openfile(int drag, QString dragfileName);
     myThread *thread;
+    int dx;
 
 private slots:
-    void chartview_moveright();
-    void chartview_moveleft();
+    void chartview_move();
 
     void on_checkBox_released();
 
@@ -61,13 +61,9 @@ private slots:
 
     void on_actionAbout_triggered();
 
-    void on_pushButtonLeft_pressed();
+    void on_horizontalSlider_sliderReleased();
 
-    void on_pushButtonRight_pressed();
-
-    void on_pushButtonLeft_released();
-
-    void on_pushButtonRight_released();
+    void on_horizontalSlider_sliderMoved(int position);
 
 private:
     Ui::MainWindow *ui;

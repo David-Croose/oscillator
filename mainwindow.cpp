@@ -55,6 +55,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     // thread
     thread = new myThread();
+
+    // chartview slider
+    ui->horizontalSlider->setMaximum(100);      // [0,100]
+    ui->horizontalSlider->setValue(50);
 }
 
 MainWindow::~MainWindow()
@@ -91,6 +95,7 @@ void MainWindow::openfile(int drag, QString dragfileName)
     }
     f->close();
     series->clear();
+    ui->horizontalSlider->setValue(50);
 
     // add points to chartview
     int i, j;
@@ -138,29 +143,17 @@ void MainWindow::on_actionAbout_triggered()
     QMessageBox::about(this, "关于", "这是一个波形查看软件");
 }
 
-void MainWindow::chartview_moveright()
+void MainWindow::chartview_move()
 {
-    ui->chartview->chart()->scroll(10, 0);
-}
-
-void MainWindow::chartview_moveleft()
-{
-    ui->chartview->chart()->scroll(-10, 0);
+    ui->chartview->chart()->scroll(this->dx, 0);
 }
 
 void myThread::run()
 {
-    int delay = 100 * 1000;
-    int i = 0;
-
     runflag = 1;
     while (runflag) {
         emit call();
-
-        if (i < 15 && ++i >= 15) {     // when the loop runs up to some lap, speed it up
-            delay = 5 * 1000;
-        }
-        QThread::usleep(delay);
+        QThread::usleep(10 * 1000);
     }
 }
 
@@ -169,26 +162,16 @@ void myThread::kill()
     runflag = 0;
 }
 
-void MainWindow::on_pushButtonLeft_pressed()
+void MainWindow::on_horizontalSlider_sliderReleased()
 {
-    this->thread->disconnect(SIGNAL(call()));
-    connect(this->thread, SIGNAL(call()), this, SLOT(chartview_moveleft()));
-    thread->start();
-}
-
-void MainWindow::on_pushButtonRight_pressed()
-{
-    this->thread->disconnect(SIGNAL(call()));
-    connect(this->thread, SIGNAL(call()), this, SLOT(chartview_moveright()));
-    thread->start();
-}
-
-void MainWindow::on_pushButtonLeft_released()
-{
+    ui->horizontalSlider->setValue(50);
     thread->kill();
 }
 
-void MainWindow::on_pushButtonRight_released()
+void MainWindow::on_horizontalSlider_sliderMoved(int position)
 {
-    thread->kill();
+    this->dx = position - 50;
+    this->thread->disconnect(SIGNAL(call()));
+    connect(this->thread, SIGNAL(call()), this, SLOT(chartview_move()));
+    thread->start();
 }

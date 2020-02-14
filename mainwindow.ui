@@ -23,7 +23,7 @@
       <x>10</x>
       <y>0</y>
       <width>821</width>
-      <height>441</height>
+      <height>431</height>
      </rect>
     </property>
     <property name="acceptDrops">
@@ -102,30 +102,17 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButtonLeft">
+   <widget class="QSlider" name="horizontalSlider">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>450</y>
-      <width>75</width>
-      <height>23</height>
+      <y>440</y>
+      <width>821</width>
+      <height>31</height>
      </rect>
     </property>
-    <property name="text">
-     <string>&lt;&lt;</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButtonRight">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>450</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>&gt;&gt;</string>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
     </property>
    </widget>
   </widget>
