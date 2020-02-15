@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    //this->setFixedSize(848, 532);
+    this->setFixedSize(878, 559);
 
     // the x-axis
     axisX = new QValueAxis;
