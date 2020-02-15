@@ -6,11 +6,6 @@
 #include <QMessageBox>
 #include <QtDebug>
 
-#define XAXIS_INIT_SIZE     (10)
-#define XAXIS_MAX_SIZE      (10000)
-#define YAXIS_INIT_SIZE     (10)
-#define YAXIS_MAX_SIZE      (10000)
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -19,17 +14,19 @@ MainWindow::MainWindow(QWidget *parent)
     //this->setFixedSize(848, 532);
 
     // the x-axis
-    QValueAxis *axisX = new QValueAxis;
+    axisX = new QValueAxis;
     axisX->setRange(0, 10);
     axisX->setTickCount(11);
     axisX->setLabelFormat("%.2f");
+    axisX->setGridLineVisible(false);
     ui->chartview->chart()->addAxis(axisX, Qt::AlignBottom);
 
     // the y-axis
-    QValueAxis *axisY = new QValueAxis;
+    axisY = new QValueAxis;
     axisY->setRange(0, 10);
     axisY->setTickCount(11);
     axisY->setLabelFormat("%.2f");
+    axisY->setGridLineVisible(false);
     ui->chartview->chart()->addAxis(axisY, Qt::AlignLeft);
 
     // the series
@@ -45,21 +42,32 @@ MainWindow::MainWindow(QWidget *parent)
     ui->chartview->chart()->legend()->hide();
 
     // the checkbox for chartview
-    ui->checkBox->setChecked(false);
-    ui->checkBox_2->setChecked(false);
+    ui->checkBoxDispBigPoints->setChecked(false);
+    ui->checkBoxDispCoor->setChecked(false);
+    ui->checkBoxDispGrid->setChecked(false);
 
     // the spinbox(x,y-axis range)
-    ui->spinBox->setRange(0, XAXIS_MAX_SIZE);
-    ui->spinBox->setValue(XAXIS_INIT_SIZE);
-    ui->spinBox_2->setRange(0, YAXIS_MAX_SIZE);
-    ui->spinBox_2->setValue(YAXIS_INIT_SIZE);
+    ui->spinBoxXstart->setRange(0, 20000);
+    ui->spinBoxXstart->setValue(0);
+    ui->spinBoxXdiv->setRange(0, 20000);
+    ui->spinBoxXdiv->setValue(11);
+    ui->spinBoxXend->setRange(0, 20000);
+    ui->spinBoxXend->setValue(100);
+    ui->spinBoxYstart->setRange(-20000, 20000);
+    ui->spinBoxYstart->setValue(-10);
+    ui->spinBoxYdiv->setRange(-20000, 20000);
+    ui->spinBoxYdiv->setValue(11);
+    ui->spinBoxYend->setRange(-20000, 20000);
+    ui->spinBoxYend->setValue(10);
 
     // thread for chartview slider
     thread = new myThread();
 
     // chartview slider
-    ui->horizontalSlider->setMaximum(100);      // [0,100]
-    ui->horizontalSlider->setValue(50);
+    ui->sliderX->setMaximum(100);      // [0,100]
+    ui->sliderX->setValue(50);
+    ui->sliderY->setMaximum(100);      // [0,100]
+    ui->sliderY->setValue(50);
 }
 
 MainWindow::~MainWindow()
@@ -102,7 +110,8 @@ void MainWindow::openfile(int drag, QString dragfileName)
         QMessageBox::about(this, "错误", tmp);
         return;
     }
-    ui->horizontalSlider->setValue(50);
+    ui->sliderX->setValue(50);
+    ui->sliderY->setValue(50);
 
     // clear all series before adding points to chartview
     for (quint64 i = 0; i < sizeof(this->series) / sizeof(this->series[0]); i++) {
@@ -119,26 +128,6 @@ void MainWindow::openfile(int drag, QString dragfileName)
     for (spare = datlen % CONFIG_EACHSERIESCARRY, j = 0; j < spare; j++) {
         series[i].append(i * CONFIG_EACHSERIESCARRY + j, dat[i * CONFIG_EACHSERIESCARRY + j]);
     }
-}
-
-void MainWindow::on_checkBox_released()
-{
-    series->setPointsVisible(ui->checkBox->isChecked());
-}
-
-void MainWindow::on_checkBox_2_released()
-{
-    series->setPointLabelsVisible(ui->checkBox_2->isChecked());
-}
-
-void MainWindow::on_spinBox_valueChanged(int arg1)
-{
-    ui->chartview->chart()->axes(Qt::Horizontal, NULL)[0]->setRange(0, arg1);
-}
-
-void MainWindow::on_spinBox_2_valueChanged(int arg1)
-{
-    ui->chartview->chart()->axes(Qt::Vertical, NULL)[0]->setRange(0, arg1);
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent*event){
@@ -162,7 +151,7 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::chartview_move()
 {
-    ui->chartview->chart()->scroll(this->dx, 0);
+    ui->chartview->chart()->scroll(this->dx, this->dy);
 }
 
 void myThread::run()
@@ -179,16 +168,78 @@ void myThread::kill()
     runflag = 0;
 }
 
-void MainWindow::on_horizontalSlider_sliderReleased()
+void MainWindow::on_checkBoxDispBigPoints_released()
 {
-    ui->horizontalSlider->setValue(50);
-    thread->kill();
+    series->setPointsVisible(ui->checkBoxDispBigPoints->isChecked());
 }
 
-void MainWindow::on_horizontalSlider_sliderMoved(int position)
+void MainWindow::on_checkBoxDispCoor_released()
+{
+    series->setPointLabelsVisible(ui->checkBoxDispCoor->isChecked());
+}
+
+void MainWindow::on_checkBoxDispGrid_released()
+{
+    ui->chartview->chart()->axes(Qt::Horizontal, NULL)[0]->setGridLineVisible(ui->checkBoxDispGrid->isChecked());
+    ui->chartview->chart()->axes(Qt::Vertical, NULL)[0]->setGridLineVisible(ui->checkBoxDispGrid->isChecked());
+}
+
+void MainWindow::on_spinBoxXstart_valueChanged(int arg1)
+{
+    ui->chartview->chart()->axes(Qt::Horizontal, NULL)[0]->setMin(arg1);
+}
+
+void MainWindow::on_spinBoxXdiv_valueChanged(int arg1)
+{
+    axisX->setTickCount(arg1);
+}
+
+void MainWindow::on_spinBoxXend_valueChanged(int arg1)
+{
+    ui->chartview->chart()->axes(Qt::Horizontal, NULL)[0]->setMax(arg1);
+}
+
+void MainWindow::on_spinBoxYstart_valueChanged(int arg1)
+{
+    ui->chartview->chart()->axes(Qt::Vertical, NULL)[0]->setMin(arg1);
+}
+
+void MainWindow::on_spinBoxYdiv_valueChanged(int arg1)
+{
+    axisY->setTickCount(arg1);
+}
+
+void MainWindow::on_spinBoxYend_valueChanged(int arg1)
+{
+    ui->chartview->chart()->axes(Qt::Vertical, NULL)[0]->setMax(arg1);
+}
+
+void MainWindow::on_sliderX_sliderMoved(int position)
 {
     this->dx = position - 50;
+    this->dy = 0;
     this->thread->disconnect(SIGNAL(call()));
     connect(this->thread, SIGNAL(call()), this, SLOT(chartview_move()));
     thread->start();
+}
+
+void MainWindow::on_sliderX_sliderReleased()
+{
+    ui->sliderX->setValue(50);
+    thread->kill();
+}
+
+void MainWindow::on_sliderY_sliderMoved(int position)
+{
+    this->dx = 0;
+    this->dy = position - 50;
+    this->thread->disconnect(SIGNAL(call()));
+    connect(this->thread, SIGNAL(call()), this, SLOT(chartview_move()));
+    thread->start();
+}
+
+void MainWindow::on_sliderY_sliderReleased()
+{
+    ui->sliderY->setValue(50);
+    thread->kill();
 }

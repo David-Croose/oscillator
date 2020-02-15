@@ -11,7 +11,7 @@
 #include<QUrl>
 #include <QThread>
 
-#define CONFIG_MAXPOINTS        (30000)
+#define CONFIG_MAXPOINTS        (40000)
 #define CONFIG_EACHSERIESCARRY  (500)
 #define TOTAL_SERIES            (CONFIG_MAXPOINTS / CONFIG_EACHSERIESCARRY)
 
@@ -44,29 +44,46 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    QLineSeries series[TOTAL_SERIES];
     void openfile(int drag, QString dragfileName);
+    QLineSeries series[TOTAL_SERIES];
     myThread *thread;
     int dx;
+    int dy;
+    QValueAxis *axisX;
+    QValueAxis *axisY;
 
 private slots:
     void chartview_move();
-
-    void on_checkBox_released();
-
-    void on_checkBox_2_released();
-
-    void on_spinBox_valueChanged(int arg1);
-
-    void on_spinBox_2_valueChanged(int arg1);
 
     void on_actionOpenfile_triggered();
 
     void on_actionAbout_triggered();
 
-    void on_horizontalSlider_sliderReleased();
+    void on_checkBoxDispBigPoints_released();
 
-    void on_horizontalSlider_sliderMoved(int position);
+    void on_checkBoxDispCoor_released();
+
+    void on_checkBoxDispGrid_released();
+
+    void on_spinBoxXstart_valueChanged(int arg1);
+
+    void on_spinBoxXdiv_valueChanged(int arg1);
+
+    void on_spinBoxXend_valueChanged(int arg1);
+
+    void on_spinBoxYstart_valueChanged(int arg1);
+
+    void on_spinBoxYdiv_valueChanged(int arg1);
+
+    void on_spinBoxYend_valueChanged(int arg1);
+
+    void on_sliderX_sliderMoved(int position);
+
+    void on_sliderX_sliderReleased();
+
+    void on_sliderY_sliderMoved(int position);
+
+    void on_sliderY_sliderReleased();
 
 private:
     Ui::MainWindow *ui;
