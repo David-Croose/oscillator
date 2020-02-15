@@ -32,18 +32,19 @@ MainWindow::MainWindow(QWidget *parent)
     axisY->setLabelFormat("%.2f");
     ui->chartview->chart()->addAxis(axisY, Qt::AlignLeft);
 
-    // append points
-    series = new QLineSeries();
-    ui->chartview->chart()->addSeries(series);
-    series->attachAxis(axisX);
-    series->attachAxis(axisY);
+    // the series
+    for (quint64 i = 0; i < sizeof(this->series) / sizeof(this->series[0]); i++) {
+        ui->chartview->chart()->addSeries(&series[i]);
+        series[i].attachAxis(axisX);
+        series[i].attachAxis(axisY);
+        series[i].setPointLabelsVisible(true);
+        series[i].setPointsVisible(true);
+    }
 
-    // the points and chartview
-    series->setPointLabelsVisible(true);
-    series->setPointsVisible(true);
+    // the chartview
     ui->chartview->chart()->legend()->hide();
 
-    // the checkbox
+    // the checkbox for chartview
     ui->checkBox->setChecked(true);
     ui->checkBox_2->setChecked(true);
 
@@ -53,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->spinBox_2->setRange(0, YAXIS_MAX_SIZE);
     ui->spinBox_2->setValue(YAXIS_INIT_SIZE);
 
-    // thread
+    // thread for chartview slider
     thread = new myThread();
 
     // chartview slider
@@ -66,10 +67,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-QByteArray dat;
-
 void MainWindow::openfile(int drag, QString dragfileName)
 {
+    QByteArray dat;
     QString fileName;
 
     if (drag == 0) {
@@ -90,17 +90,34 @@ void MainWindow::openfile(int drag, QString dragfileName)
 
     // read points from file
     dat = f->readAll();
-    if ((this->datlen = dat.length()) == 0) {
-        QMessageBox::about(this, "错误", "文件为空");
-    }
     f->close();
-    series->clear();
+    quint64 datlen = dat.length();
+    if (datlen == 0) {
+        QMessageBox::about(this, "错误", "文件为空!");
+        return;
+    }
+    if (datlen > CONFIG_MAXPOINTS) {
+        QString tmp;
+        tmp.sprintf("数据点超过%d个!", CONFIG_MAXPOINTS);
+        QMessageBox::about(this, "错误", tmp);
+        return;
+    }
     ui->horizontalSlider->setValue(50);
 
+    // clear all series before adding points to chartview
+    for (quint64 i = 0; i < sizeof(this->series) / sizeof(this->series[0]); i++) {
+        this->series[i].clear();
+    }
+
     // add points to chartview
-    int i, j;
-    for (j = 0, i = 0; i < this->datlen; i += 1, j++) {
-        series->append(j, dat[i]);
+    int i, j, group, spare;
+    for (i = 0, group = datlen / CONFIG_EACHSERIESCARRY; i < group; i++) {
+        for (j = 0; j < CONFIG_EACHSERIESCARRY; j++) {
+            series[i].append(i * group + j, dat[i * group + j]);
+        }
+    }
+    for (spare = datlen % CONFIG_EACHSERIESCARRY, j = 0; j < spare; j++) {
+        series[i].append(i * group + j, dat[i * group + j]);
     }
 }
 

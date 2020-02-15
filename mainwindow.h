@@ -11,6 +11,10 @@
 #include<QUrl>
 #include <QThread>
 
+#define CONFIG_MAXPOINTS        (30000)
+#define CONFIG_EACHSERIESCARRY  (500)
+#define TOTAL_SERIES            (CONFIG_MAXPOINTS / CONFIG_EACHSERIESCARRY)
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -40,8 +44,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    QLineSeries *series;
-    int datlen;
+    QLineSeries series[TOTAL_SERIES];
     void openfile(int drag, QString dragfileName);
     myThread *thread;
     int dx;
