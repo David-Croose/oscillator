@@ -37,16 +37,16 @@ MainWindow::MainWindow(QWidget *parent)
         ui->chartview->chart()->addSeries(&series[i]);
         series[i].attachAxis(axisX);
         series[i].attachAxis(axisY);
-        series[i].setPointLabelsVisible(true);
-        series[i].setPointsVisible(true);
+        series[i].setPointLabelsVisible(false);
+        series[i].setPointsVisible(false);
     }
 
     // the chartview
     ui->chartview->chart()->legend()->hide();
 
     // the checkbox for chartview
-    ui->checkBox->setChecked(true);
-    ui->checkBox_2->setChecked(true);
+    ui->checkBox->setChecked(false);
+    ui->checkBox_2->setChecked(false);
 
     // the spinbox(x,y-axis range)
     ui->spinBox->setRange(0, XAXIS_MAX_SIZE);
@@ -113,11 +113,11 @@ void MainWindow::openfile(int drag, QString dragfileName)
     int i, j, group, spare;
     for (i = 0, group = datlen / CONFIG_EACHSERIESCARRY; i < group; i++) {
         for (j = 0; j < CONFIG_EACHSERIESCARRY; j++) {
-            series[i].append(i * group + j, dat[i * group + j]);
+            series[i].append(i * CONFIG_EACHSERIESCARRY + j, dat[i * CONFIG_EACHSERIESCARRY + j]);
         }
     }
     for (spare = datlen % CONFIG_EACHSERIESCARRY, j = 0; j < spare; j++) {
-        series[i].append(i * group + j, dat[i * group + j]);
+        series[i].append(i * CONFIG_EACHSERIESCARRY + j, dat[i * CONFIG_EACHSERIESCARRY + j]);
     }
 }
 
