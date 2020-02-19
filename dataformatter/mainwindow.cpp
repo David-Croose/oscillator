@@ -54,8 +54,8 @@ void MainWindow::dropEvent(QDropEvent*event){
     // write file
     inputFileName.remove(QRegExp("\\..*$"));
     int unit  = ui->spinBox->value() * 1024;
-    int units = filelen / unit;
-    int spare = filelen % unit;
+    int units = ba.length() / unit;
+    int spare = ba.length() % unit;
     QString filename;
     char *p = ba.data();
     for (int i = 0; i < units; i++) {
