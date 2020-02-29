@@ -29,5 +29,5 @@ Default/*
 # ctags
 tags
 
-# qt
-*.user
+# others
+build-*

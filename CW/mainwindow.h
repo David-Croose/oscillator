@@ -6,7 +6,7 @@
 #include <QMimeData>
 #include <QDropEvent>
 #include <QUrl>
-#include <QFile>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,14 +19,13 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void openfile(QString dragfileName);
 
 private:
     Ui::MainWindow *ui;
 
 protected:
-    void dragEnterEvent(QDragEnterEvent*event);//拖动进入事件
-    void dropEvent(QDropEvent*event);
-private slots:
-    void on_comboBox_currentIndexChanged(int index);
+     void dragEnterEvent(QDragEnterEvent*event);//拖动进入事件
+     void dropEvent(QDropEvent*event);
 };
 #endif // MAINWINDOW_H

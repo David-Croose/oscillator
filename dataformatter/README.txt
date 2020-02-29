@@ -1,1 +1,0 @@
-This is just a tool to format data before open whom in "oscilloscope".
